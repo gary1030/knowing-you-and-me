@@ -21,5 +21,6 @@ module.exports = {
   },
   rules: {
     'comma-dangle': 'off',
+    'linebreak-style': ['off', 'windows'],
   },
 };
