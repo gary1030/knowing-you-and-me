@@ -5,8 +5,8 @@ import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
 
 export default function Home({ navigation }) {
-  const { db, initDB } = useDatabase();
-  const { queryContacts, insertContact } = useContact();
+  const { db, initDB, clearDB } = useDatabase();
+  const { insertContact } = useContact();
   const [hasInit, setHasInit] = useState(false);
 
   useEffect(() => {
@@ -21,12 +21,22 @@ export default function Home({ navigation }) {
       <Text>Home Screen</Text>
       <Button
         title="Insert contact"
-        onPress={() => insertContact(db, 'Alice', '0988123345', 1)}
+        onPress={() => insertContact(db, 'Alice', '0988123345')}
       />
-      <Button title="Query contacts" onPress={() => queryContacts(db)} />
+      <Button
+        title="See contact"
+        onPress={() => navigation.navigate('Contact', { db })}
+      />
       <Button
         title="See status"
         onPress={() => navigation.navigate('Status')}
+      />
+      <Button
+        title="Clear database"
+        onPress={() => {
+          clearDB();
+          setHasInit(false);
+        }}
       />
     </View>
   );

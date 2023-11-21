@@ -1,23 +1,34 @@
+/* eslint-disable no-underscore-dangle */
 const useContact = () => {
-  const queryContacts = (db) => {
+  const queryContacts = async (db) => {
     if (!db) {
-      return;
+      return null;
     }
-    db.transaction((tx) => {
-      tx.executeSql('select * from contact', null, (_, { rows }) => {
-        console.log(rows);
+    const queryResult = await new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          'SELECT * FROM contact',
+          [],
+          (_, { rows }) => {
+            resolve(rows._array);
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
       });
     });
+    return queryResult;
   };
 
-  const insertContact = (db, name, phoneNumber, isSelf) => {
+  const insertContact = (db, name, phoneNumber) => {
     if (!db) {
       return;
     }
     db.transaction((tx) => {
       tx.executeSql(
-        'INSERT INTO contact (name, phone_number, is_self) values (?, ?, ?)',
-        [name, phoneNumber, isSelf],
+        'INSERT INTO contact (name, phone_number) values (?, ?)',
+        [name, phoneNumber],
         (_, { rows }) => {
           console.log(rows);
         },
