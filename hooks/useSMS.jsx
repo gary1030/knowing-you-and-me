@@ -4,7 +4,7 @@ import { PermissionsAndroid } from 'react-native';
 
 import { startReadSMS } from '@maniac-tech/react-native-expo-read-sms';
 import * as SMS from 'expo-sms';
-import requestReadSMSPermission from '../functions/requestSMSPermission';
+import requestSMSPermission from '../functions/requestSMSPermission';
 
 const useSMS = () => {
   const MESSAGE_PREFIX = 'knowingus';
@@ -60,7 +60,7 @@ const useSMS = () => {
   };
 
   useEffect(() => {
-    console.log('requestReadSMSPermission:', requestReadSMSPermission);
+    console.log('requestReadSMSPermission:', requestSMSPermission);
     setAppState('init');
     checkPermissions();
   }, []);
@@ -86,7 +86,7 @@ const useSMS = () => {
     hasReceiveSMSPermission,
     hasReadSMSPermission,
     hasSendSMSPermission,
-    requestReadSMSPermission,
+    requestSMSPermission,
     smsPermissionState,
     successCallbackStatus,
     smsValue,

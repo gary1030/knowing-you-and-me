@@ -1,13 +1,18 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
+import useSMS from '../../hooks/useSMS';
 
 export default function Home({ navigation }) {
   const { db, initDB, clearDB } = useDatabase();
   const { insertContact } = useContact();
   const [hasInit, setHasInit] = useState(false);
+  const [targetPhoneNumber, setTargetPhoneNumber] = useState(null);
+  const [message, setMessage] = useState(null);
+  const { sendSMS } = useSMS();
 
   useEffect(() => {
     if (!hasInit) {
@@ -37,6 +42,15 @@ export default function Home({ navigation }) {
           clearDB();
           setHasInit(false);
         }}
+      />
+      <TextInput
+        label="Target phone number"
+        onChangeText={setTargetPhoneNumber}
+      />
+      <TextInput label="Message" onChangeText={setMessage} />
+      <Button
+        title="Send SMS"
+        onPress={() => sendSMS(targetPhoneNumber, message)}
       />
     </View>
   );
