@@ -17,6 +17,7 @@
     "expo": "~49.0.15",
     "expo-file-system": "~15.4.4",
     "expo-sharing": "~11.5.0",
+    "expo-sms": "^11.5.0",
     "expo-sqlite": "~11.3.3",
     "expo-status-bar": "~1.6.0",
     "prop-types": "^15.8.1",

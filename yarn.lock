@@ -3781,6 +3781,11 @@ expo-sharing@~11.5.0:
   resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-11.5.0.tgz#a8cad65874d882b7f75b12856b4ef55ea9b60a2d"
   integrity sha512-uerM5YH1FKDZXfkP9ORebvlMVOPP/AfoYgYBez6a8G9fztNYHnRCA6mgK+3aQmpnb3ltmjnAZC39kH18bTNcVw==
 
+expo-sms@^11.5.0:
+  version "11.5.0"
+  resolved "https://registry.yarnpkg.com/expo-sms/-/expo-sms-11.5.0.tgz#22c9bde60fa5bf7a352cc6b0961b0c70cc8d54c6"
+  integrity sha512-BMpIvp4DmUv19RtDghw9bbl/0LhwiZPh2UHOxQ7FCO3skYuMqOn42/TMKEpJG3yADaMZsV19wjinQ0S+BPDigg==
+
 expo-sqlite@~11.3.3:
   version "11.3.3"
   resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-11.3.3.tgz#5b07e7ffd744d2d04fe2075ec6fac834c78a5f53"
