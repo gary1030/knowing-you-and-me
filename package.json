@@ -15,6 +15,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "expo": "~49.0.15",
+    "expo-contacts": "~12.2.0",
     "expo-file-system": "~15.4.4",
     "expo-sharing": "~11.5.0",
     "expo-sms": "^11.5.0",
