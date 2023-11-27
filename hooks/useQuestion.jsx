@@ -48,14 +48,14 @@ const useQuestion = () => {
     });
   };
 
-  const insertMyResponse = (db, questionId, myResponse) => {
+  const insertMyResponse = (db, questionId, myResponse, state) => {
     if (!db) {
       throw new Error('db is null');
     }
     db.transaction((tx) => {
       tx.executeSql(
-        'UPDATE question SET my_response = ?, my_response_created_time = ? WHERE id = ?',
-        [myResponse, new Date().getTime(), questionId],
+        'UPDATE question SET my_response = ?, my_response_created_time = ?, state = ? WHERE id = ?',
+        [myResponse, new Date().getTime(), state, questionId],
         (_, { rows }) => {
           console.log(rows);
           // return question id
@@ -68,14 +68,14 @@ const useQuestion = () => {
     });
   };
 
-  const insertPartnerResponse = (db, questionId, partnerResponse) => {
+  const insertPartnerResponse = (db, questionId, partnerResponse, state) => {
     if (!db) {
       throw new Error('db is null');
     }
     db.transaction((tx) => {
       tx.executeSql(
-        'UPDATE question SET partner_response = ?, partner_response_created_time = ? WHERE id = ?',
-        [partnerResponse, new Date().getTime(), questionId],
+        'UPDATE question SET partner_response = ?, partner_response_created_time = ?, state = ?  WHERE id = ?',
+        [partnerResponse, new Date().getTime(), state, questionId],
         (_, { rows }) => {
           console.log(rows);
           // return question id
