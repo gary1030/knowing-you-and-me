@@ -37,6 +37,10 @@ export default function Home({ navigation }) {
         onPress={() => navigation.navigate('Status')}
       />
       <Button
+        title="See room"
+        onPress={() => navigation.navigate('Room')}
+      />
+      <Button
         title="Clear database"
         onPress={() => {
           clearDB();
