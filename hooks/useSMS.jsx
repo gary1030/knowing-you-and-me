@@ -5,6 +5,8 @@ import { PermissionsAndroid } from 'react-native';
 import { startReadSMS } from '@maniac-tech/react-native-expo-read-sms';
 import * as SMS from 'expo-sms';
 import requestSMSPermission from '../functions/requestSMSPermission';
+import useContact from './useContact';
+import useQuestion from './useQuestion';
 
 const useSMS = () => {
   const MESSAGE_PREFIX = 'knowingus';
@@ -18,18 +20,50 @@ const useSMS = () => {
   const [smsValue, setSmsValue] = useState(null);
   const [smsError, setSMSError] = useState(null);
 
+  const { insertQuestion, insertPartnerResponse } = useQuestion();
+  const { queryByPhoneNumber, insertContact } = useContact();
+
+  const processSMS = async (sms) => {
+    try {
+      const phoneNumber = sms[0];
+      const message = sms[1];
+      if (message.startsWith(MESSAGE_PREFIX)) {
+        const messageWithoutPrefix = message.substring(MESSAGE_PREFIX.length);
+        // eval to json object
+        const messageObject = JSON.parse(messageWithoutPrefix);
+        console.log('messageObject:', messageObject);
+        const { type, text } = messageObject;
+        let contact = await queryByPhoneNumber(phoneNumber);
+        if (!contact) {
+          // save as new contact
+          await insertContact('Anonymous', phoneNumber);
+          contact = await queryByPhoneNumber(phoneNumber);
+        }
+        const partnerId = contact.id;
+        if (type === 'question') {
+          // save as new question, and state is PENDING
+          await insertQuestion(partnerId, text, 'PENDING');
+        } else if (type === 'answer') {
+          // save as new answer, and state is DONE
+          await insertPartnerResponse(partnerId, text, 'DONE');
+        }
+      }
+    } catch (error) {
+      console.log('Process SMS error: ', error);
+    }
+  };
+
   const callbackFn1 = (status, sms, error) => {
     setSmsPermissionState('Success Callback!');
 
-    if (status === 'Start Read SMS successfully') {
-      setSuccessCallbackStatus('Start Read SMS successfully');
-      setSmsValue(sms);
-    } else if (status === 'success') {
+    if (status === 'success') {
       setSuccessCallbackStatus('just success');
       setSmsValue(sms);
+      processSMS(sms);
     } else {
       setSuccessCallbackStatus('Error in success callback');
       setSMSError(error);
+      console.log('Read SMS error:', error);
     }
   };
 
