@@ -24,32 +24,41 @@ import { useState } from 'react';
 // | state | string | "WAITING" |
 
 const useDatabase = () => {
+  const dbName = 'knowingme.db';
   const [db, setDB] = useState(null);
   const initDB = async () => {
-    if (
-      !(await FileSystem.getInfoAsync(`${FileSystem.documentDirectory}SQLite`))
-        .exists
-    ) {
-      await FileSystem.makeDirectoryAsync(
-        `${FileSystem.documentDirectory}SQLite`
-      );
-    }
+    try {
+      if (
+        !(
+          await FileSystem.getInfoAsync(`${FileSystem.documentDirectory}SQLite`)
+        ).exists
+      ) {
+        await FileSystem.makeDirectoryAsync(
+          `${FileSystem.documentDirectory}SQLite`
+        );
+      }
 
-    const tempDB = SQLite.openDatabase('knowing.db');
-    tempDB.transaction((tx) => {
-      tx.executeSql(
-        'create table if not exists contact (id integer primary key autoincrement, name text, phone_number text not null unique);'
-      );
-      tx.executeSql(
-        'create table if not exists question (id integer primary key autoincrement, created_time datetime, text text, partner_id integer, my_response text, partner_response text, my_response_created_time datetime, partner_response_created_time datetime, state text, foreign key (partner_id) references contact(id));'
-      );
-    });
-    setDB(tempDB);
-    return tempDB;
+      const tempDB = SQLite.openDatabase(dbName);
+      console.log('Start creating tables', tempDB);
+      tempDB.transaction((tx) => {
+        tx.executeSql(
+          'create table if not exists contact (id integer primary key autoincrement, name text, phone_number text not null unique);'
+        );
+        tx.executeSql(
+          'create table if not exists question (id integer primary key autoincrement, created_time datetime, text text, partner_id integer, my_response text, partner_response text, my_response_created_time datetime, partner_response_created_time datetime, state text, foreign key (partner_id) references contact(id));'
+        );
+      });
+      setDB(tempDB);
+      console.log('Init db done');
+      return tempDB;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
   };
 
   const exportDB = async () => {
-    await Sharing.shareAsync(`${FileSystem.documentDirectory}knowing.db`);
+    await Sharing.shareAsync(`${FileSystem.documentDirectory}${dbName}`);
   };
 
   const importDB = async () => {};
@@ -62,13 +71,14 @@ const useDatabase = () => {
         tx.executeSql('drop table if exists question;');
       });
       setDB(null);
-      await FileSystem.deleteAsync(`${FileSystem.documentDirectory}knowing.db`);
+      await FileSystem.deleteAsync(`${FileSystem.documentDirectory}${dbName}`);
     } catch (error) {
       console.log(error);
     }
   };
 
   return {
+    dbName,
     db,
     initDB,
     exportDB,

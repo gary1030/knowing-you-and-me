@@ -28,5 +28,6 @@ module.exports = {
     'func-names': 'off', // disable "Function component is not a function declaration"
     'object-curly-newline': 'off', // disable "Expected a line break after this opening brace"
     'implicit-arrow-linebreak': 'off', // disable "Expected linebreaks to be 'LF' but found 'CRLF'"
+    'react/jsx-curly-newline': 'off',
   },
 };

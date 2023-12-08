@@ -1,61 +1,87 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
+import Contact from '../../components/contact';
 import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
-import useSMS from '../../hooks/useSMS';
 
 export default function Home({ navigation }) {
-  const { db, initDB, clearDB } = useDatabase();
-  const { insertContact } = useContact();
+  const { db, initDB } = useDatabase();
+  const { contacts, queryContacts } = useContact();
   const [hasInit, setHasInit] = useState(false);
-  const [targetPhoneNumber, setTargetPhoneNumber] = useState(null);
-  const [message, setMessage] = useState(null);
-  const { sendSMS } = useSMS();
+
+  const refreshContacts = async () => {
+    await queryContacts();
+  };
 
   useEffect(() => {
     if (!hasInit) {
       initDB();
       setHasInit(true);
     }
-  }, [hasInit, initDB]);
+  }, [hasInit]);
+
+  useEffect(() => {
+    console.log('query contacts');
+    queryContacts();
+  }, [db]);
+
+  console.log(contacts);
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Insert contact"
-        onPress={() => insertContact(db, 'Alice', '0988123345')}
-      />
-      <Button
-        title="See contact"
-        onPress={() => navigation.navigate('Contact', { db })}
-      />
-      <Button
-        title="See status"
-        onPress={() => navigation.navigate('Status')}
-      />
-      <Button
-        title="See room"
-        onPress={() => navigation.navigate('Room')}
-      />
-      <Button
-        title="Clear database"
-        onPress={() => {
-          clearDB();
-          setHasInit(false);
-        }}
-      />
-      <TextInput
-        label="Target phone number"
-        onChangeText={setTargetPhoneNumber}
-      />
-      <TextInput label="Message" onChangeText={setMessage} />
-      <Button
-        title="Send SMS"
-        onPress={() => sendSMS(targetPhoneNumber, message)}
-      />
+    <View style={{ flex: 1, margin: 30 }}>
+      <View
+        flexDirection="row"
+        style={{ display: 'flex', justifyContent: 'space-between' }}
+      >
+        <View flexDirection="row">
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 24,
+              marginBottom: '1%',
+              paddingTop: '3%',
+            }}
+          >
+            聯絡人
+          </Text>
+          <IconButton
+            icon="refresh"
+            size={40}
+            onPress={() => refreshContacts()}
+          />
+        </View>
+        <IconButton
+          icon="plus-circle-outline"
+          size={40}
+          onPress={() => navigation.navigate('AddContact')}
+        />
+      </View>
+      <View style={{ alignItems: 'center' }}>
+        {contacts.map((contact) => (
+          <Contact
+            key={contact.id}
+            contactId={contact.id}
+            name={contact.name}
+            phoneNumber={contact.phone_number}
+            navigation={navigation}
+          />
+        ))}
+      </View>
+
+      <View style={{ position: 'absolute', bottom: 10 }}>
+        <View flexDirection="row">
+          <Button
+            title="See status"
+            onPress={() => navigation.navigate('Status')}
+          />
+          <Button
+            title="See manage page"
+            onPress={() => navigation.navigate('Manage')}
+          />
+        </View>
+      </View>
     </View>
   );
 }
