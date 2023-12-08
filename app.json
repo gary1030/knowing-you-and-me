@@ -22,6 +22,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": [
+        "RECEIVE_SMS",
+        "READ_SMS",
+        "SEND_SMS"
+      ],
       "package": "com.gary1030.knowingyouandme"
     },
     "web": {

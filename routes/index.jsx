@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import * as React from 'react';
+import React, { useEffect } from 'react';
+import useSMS from '../hooks/useSMS';
 import AddContact from './addContact';
 import Contact from './contact';
 import Home from './home';
@@ -10,6 +11,12 @@ import Status from './status';
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
+  const { buttonClickHandler } = useSMS();
+  useEffect(() => {
+    console.log('Start Read SMS');
+    buttonClickHandler();
+  }, [buttonClickHandler]);
+
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen name="Home" component={Home} />
