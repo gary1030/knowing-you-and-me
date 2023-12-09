@@ -2,10 +2,14 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { IconButton, MD3Colors } from 'react-native-paper';
 
-function LeftRightButton({ icon, direction, index, setIndex }) {
+function LeftRightButton({ icon, direction, total, index, setIndex }) {
   const handlePress = () => {
     if (direction === 'left') {
-      setIndex(index - 1);
+      if (index + total === 0) {
+        setIndex(0);
+      } else {
+        setIndex(index - 1);
+      }
     }
     if (direction === 'right') {
       if (index === 0) {
@@ -23,7 +27,10 @@ function LeftRightButton({ icon, direction, index, setIndex }) {
       iconColor={MD3Colors.primary20}
       size={20}
       onPress={() => handlePress()}
-      disabled={direction === 'right' && index === 0}
+      disabled={
+        (direction === 'right' && index === 0) ||
+        (direction === 'left' && index + total === 0)
+      }
     />
   );
 }
@@ -31,6 +38,7 @@ function LeftRightButton({ icon, direction, index, setIndex }) {
 LeftRightButton.propTypes = {
   icon: PropTypes.string.isRequired,
   direction: PropTypes.string.isRequired,
+  total: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
   setIndex: PropTypes.func.isRequired,
 };

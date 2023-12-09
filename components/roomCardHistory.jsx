@@ -2,7 +2,12 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Card, Divider, Text } from 'react-native-paper';
 
-export default function RoomCardHistory({ total, index }) {
+export default function RoomCardHistory({
+  total,
+  index,
+  singleQuestionInfo,
+  partnerName,
+}) {
   return (
     <Card
       style={{
@@ -16,29 +21,17 @@ export default function RoomCardHistory({ total, index }) {
           variant="labelSmall"
           style={{ alignSelf: 'center', marginTop: '5%', marginBottom: '5%' }}
         >
-          {`#Q - ${Number(total) + Number(index)}`}
+          {`#Q - ${Number(total) + 1 + Number(index)}`}
         </Text>
         <Text
           variant="titleMedium"
           style={{ alignSelf: 'center', marginTop: '5%', marginBottom: '5%' }}
         >
-          你喜歡吃哈密瓜還是西瓜？
+          {singleQuestionInfo.text}
         </Text>
         <Divider bold="True" />
         <Divider bold="True" />
 
-        <Text
-          variant="labelLarge"
-          style={{ alignSelf: 'center', marginTop: '15%', marginBottom: '5%' }}
-        >
-          Alice 的回答
-        </Text>
-        <Text
-          variant="bodyMedium"
-          style={{ alignSelf: 'center', marginBottom: '5%' }}
-        >
-          西瓜
-        </Text>
         <Text
           variant="labelLarge"
           style={{ alignSelf: 'center', marginTop: '20%', marginBottom: '5%' }}
@@ -49,7 +42,19 @@ export default function RoomCardHistory({ total, index }) {
           variant="bodyMedium"
           style={{ alignSelf: 'center', marginBottom: '5%' }}
         >
-          哈密瓜
+          {singleQuestionInfo.my_response}
+        </Text>
+        <Text
+          variant="labelLarge"
+          style={{ alignSelf: 'center', marginTop: '15%', marginBottom: '5%' }}
+        >
+          {`${partnerName} 的回答`}
+        </Text>
+        <Text
+          variant="bodyMedium"
+          style={{ alignSelf: 'center', marginBottom: '5%' }}
+        >
+          {singleQuestionInfo.partner_response}
         </Text>
       </Card.Content>
     </Card>
@@ -59,4 +64,17 @@ export default function RoomCardHistory({ total, index }) {
 RoomCardHistory.propTypes = {
   total: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
+  singleQuestionInfo: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    created_time: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+    partner_id: PropTypes.string.isRequired,
+    my_response: PropTypes.string.isRequired,
+    partner_response: PropTypes.string.isRequired,
+    partner_response_hash: PropTypes.string,
+    my_response_created_time: PropTypes.string,
+    partner_response_created_time: PropTypes.string,
+    state: PropTypes.string.isRequired,
+  }).isRequired,
+  partnerName: PropTypes.string.isRequired,
 };

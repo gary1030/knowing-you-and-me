@@ -32,6 +32,33 @@ const useContact = () => {
     }
   };
 
+  const queryContactById = async (id) => {
+    try {
+      const db = await SQLite.openDatabase(dbName);
+      const queryResult = await new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            'SELECT * FROM contact WHERE id = ?',
+            [id],
+            (_, { rows }) => {
+              if (rows._array.length === 0) {
+                resolve(null);
+              }
+              resolve(rows._array[0]);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+      return queryResult;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   const queryByPhoneNumber = async (phoneNumber) => {
     try {
       const db = await SQLite.openDatabase(dbName);
@@ -82,6 +109,7 @@ const useContact = () => {
   return {
     contacts,
     queryContacts,
+    queryContactById,
     queryByPhoneNumber,
     insertContact,
   };

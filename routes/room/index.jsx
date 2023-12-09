@@ -1,13 +1,58 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
+import useContact from '../../hooks/useContact';
+import useQuestion from '../../hooks/useQuestion';
 import RoomCardQuestion from '../../components/roomCardQuestion';
 import LeftRightButton from '../../components/leftRightButton';
 import RoomCardHistory from '../../components/roomCardHistory';
 
-export default function Room() {
-  const [index, setIndex] = React.useState(0);
+export default function Room({ route }) {
+  const { contactId } = route.params;
+  const { queryContactById } = useContact();
+  const { queryQuestionByPartnerId } = useQuestion();
+  const [index, setIndex] = useState(0);
+  const [contactInfo, setContactInfo] = useState({});
+  const [questionInfo, setQuestionInfo] = useState({});
+
+  useEffect(() => {
+    const fetchSingleContact = async () => {
+      try {
+        setContactInfo(await queryContactById(contactId));
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+    if (contactId !== undefined) {
+      fetchSingleContact();
+    }
+  }, [contactId]);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        setQuestionInfo(await queryQuestionByPartnerId(contactId));
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+    if (contactId !== undefined) {
+      fetchQuestions();
+    }
+  }, [contactId]);
+
+  useEffect(() => {
+    console.log('contact', contactInfo);
+    console.log('question', questionInfo);
+    console.log('index', index);
+    console.log('questionInfo.length: ', questionInfo.length);
+    console.log(
+      'questionInfo.length + 1 + index: ',
+      questionInfo.length + 1 + index
+    );
+  }, [contactInfo, questionInfo]);
+
   return (
     <View
       style={{
@@ -29,7 +74,7 @@ export default function Room() {
             marginBottom: '1%',
           }}
         >
-          A world between you and Alice!
+          {`A world between you and ${contactInfo.name}!`}
         </Text>
       </View>
       <View
@@ -43,19 +88,26 @@ export default function Room() {
         <LeftRightButton
           icon="chevron-left-circle"
           direction="left"
+          total={questionInfo.length}
           index={index}
           setIndex={setIndex}
         />
         {index === 0 ? (
           <ScrollView>
-            <RoomCardQuestion name="Alice" />
+            <RoomCardQuestion name={contactInfo.name} />
           </ScrollView>
         ) : (
-          <RoomCardHistory total="30" index={index} />
+          <RoomCardHistory
+            total={questionInfo.length}
+            index={index}
+            singleQuestionInfo={questionInfo[questionInfo.length + index]}
+            partnerName={contactInfo.name}
+          />
         )}
         <LeftRightButton
           icon="chevron-right-circle"
           direction="right"
+          total={questionInfo.length}
           index={index}
           setIndex={setIndex}
         />
@@ -65,7 +117,9 @@ export default function Room() {
 }
 
 Room.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      contactId: PropTypes.number.isRequired,
+    }).isRequired,
   }).isRequired,
 };

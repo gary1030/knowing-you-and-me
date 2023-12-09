@@ -6,14 +6,18 @@ import { TextInput } from 'react-native-paper';
 import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
 import useSMS from '../../hooks/useSMS';
+import useQuestion from '../../hooks/useQuestion';
 
 export default function Manage({ navigation }) {
   const { db, initDB, clearDB } = useDatabase();
   const { insertContact } = useContact();
+  const { insertFakeQuestionRow } = useQuestion();
   const [hasInit, setHasInit] = useState(false);
   const [targetPhoneNumber, setTargetPhoneNumber] = useState(null);
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+  const [partnerAnswer, setPartnerAnswer] = useState('');
+  const [partnerId, setPartnerId] = useState(0);
   const { sendSMS } = useSMS();
 
   useEffect(() => {
@@ -62,8 +66,16 @@ export default function Manage({ navigation }) {
         onChangeText={setTargetPhoneNumber}
       />
       <TextInput label="Question" onChangeText={setQuestion} />
-      <TextInput label="Answer" onChangeText={setAnswer} />
+      <TextInput label="Your Answer" onChangeText={setAnswer} />
       <Button title="Send SMS" onPress={() => onSendSMS()} />
+      <TextInput label="Partner Id" onChangeText={setPartnerId} />
+      <TextInput label="Partner Answer" onChangeText={setPartnerAnswer} />
+      <Button
+        title="Add history"
+        onPress={() =>
+          insertFakeQuestionRow(partnerId, question, answer, partnerAnswer)
+        }
+      />
     </View>
   );
 }
