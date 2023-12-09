@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
-import RnHash, { CONSTANTS } from 'react-native-hash';
+import { CONSTANTS, JSHash } from 'react-native-hash';
 import { TextInput } from 'react-native-paper';
 import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
@@ -24,7 +24,7 @@ export default function Manage({ navigation }) {
   }, [hasInit]);
 
   const onSendSMS = async () => {
-    const answerHash = RnHash.hashString(answer, CONSTANTS.HashAlgorithms.md2);
+    const answerHash = await JSHash(answer, CONSTANTS.HashAlgorithms.md5);
     const messageJson = {
       type: 'question',
       text: question,

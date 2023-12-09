@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 function PermissionStatus({
   READ_SMS_PERMISSION_STATUS,
   RECEIVE_SMS_PERMISSION_STATUS,
-  requestReadSMSPermission,
+  requestSMSPermission,
 }) {
   console.log(
     'READ_SMS_PERMISSION_STATUS, RECEIVE_SMS_PERMISSION_STATUS:',
@@ -51,7 +51,7 @@ function PermissionStatus({
       </DataTable.Row>
 
       {(!READ_SMS_PERMISSION_STATUS || !RECEIVE_SMS_PERMISSION_STATUS) && (
-        <Button onPress={requestReadSMSPermission} mode="contained">
+        <Button onPress={requestSMSPermission} mode="contained">
           Request Permission
         </Button>
       )}
@@ -66,7 +66,7 @@ export default function Status() {
     checkPermissions,
     hasReceiveSMSPermission,
     hasReadSMSPermission,
-    requestReadSMSPermission,
+    requestSMSPermission,
     smsPermissionState,
     smsValue,
     smsError,
@@ -88,7 +88,7 @@ export default function Status() {
         <PermissionStatus
           READ_SMS_PERMISSION_STATUS={hasReadSMSPermission}
           RECEIVE_SMS_PERMISSION_STATUS={hasReceiveSMSPermission}
-          requestReadSMSPermission={requestReadSMSPermission}
+          requestSMSPermission={requestSMSPermission}
         />
         <DataTable>
           <DataTable.Row>

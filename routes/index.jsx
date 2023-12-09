@@ -11,10 +11,10 @@ import Status from './status';
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
-  const { buttonClickHandler, requestReadSMSPermission } = useSMS();
+  const { buttonClickHandler, requestSMSPermission } = useSMS();
   useEffect(() => {
     async function init() {
-      await requestReadSMSPermission();
+      await requestSMSPermission();
       buttonClickHandler();
       console.log('Start Read SMS');
     }

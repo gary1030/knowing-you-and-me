@@ -2,7 +2,7 @@
 import { PermissionsAndroid, Platform } from 'react-native';
 import checkIfHasSMSPermission from './checkIfHasSMSPermission';
 
-async function requestReadSMSPermission() {
+async function requestSMSPermission() {
   if (Platform.OS === 'android') {
     const hasPermission = await checkIfHasSMSPermission();
     if (
@@ -28,4 +28,4 @@ async function requestReadSMSPermission() {
   return true;
 }
 
-export default requestReadSMSPermission;
+export default requestSMSPermission;

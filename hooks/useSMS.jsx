@@ -122,7 +122,7 @@ const useSMS = () => {
   };
 
   useEffect(() => {
-    console.log('requestReadSMSPermission:', requestSMSPermission);
+    console.log('requestSMSPermission:', requestSMSPermission);
     setAppState('init');
     checkPermissions();
   }, []);
