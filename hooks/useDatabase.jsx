@@ -19,9 +19,10 @@ import { useState } from 'react';
 // | partner_id | contact id (FK) | 1 |
 // | my_response | string | "中華電信" |
 // | partner_response | string | "台灣大哥大" |
+// | partner_response_hash | string | "wgfewgwgewgewgew" |
 // | my_response_created_time | string | 20231119 13:00:00 |
 // | partner_response_created_time | string | 20231119 14:00:00 |
-// | state | string | "WAITING" |
+// | state | string | "WAITING" | // WAITING, RECEIVED, ANSWERED, PENDING, DONE
 
 const useDatabase = () => {
   const dbName = 'knowingme.db';
@@ -45,7 +46,7 @@ const useDatabase = () => {
           'create table if not exists contact (id integer primary key autoincrement, name text, phone_number text not null unique);'
         );
         tx.executeSql(
-          'create table if not exists question (id integer primary key autoincrement, created_time datetime, text text, partner_id integer, my_response text, partner_response text, my_response_created_time datetime, partner_response_created_time datetime, state text, foreign key (partner_id) references contact(id));'
+          'create table if not exists question (id integer primary key autoincrement, created_time datetime, text text, partner_id integer, my_response text, partner_response text, partner_response_hash text,  my_response_created_time datetime, partner_response_created_time datetime, state text, foreign key (partner_id) references contact(id));'
         );
       });
       setDB(tempDB);

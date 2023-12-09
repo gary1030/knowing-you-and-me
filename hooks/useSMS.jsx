@@ -20,7 +20,11 @@ const useSMS = () => {
   const [smsValue, setSmsValue] = useState(null);
   const [smsError, setSMSError] = useState(null);
 
-  const { insertQuestion, insertPartnerResponse } = useQuestion();
+  const {
+    insertQuestion,
+    insertPartnerResponse,
+    getInProgressQuestionByPartnerId,
+  } = useQuestion();
   const { queryByPhoneNumber, insertContact } = useContact();
 
   const processSMS = async (sms) => {
@@ -42,10 +46,34 @@ const useSMS = () => {
         const partnerId = contact.id;
         if (type === 'question') {
           // save as new question, and state is PENDING
-          await insertQuestion(partnerId, text, 'PENDING');
+          await insertQuestion(
+            partnerId,
+            text,
+            'PENDING',
+            messageObject.answer_hash
+          );
         } else if (type === 'answer') {
           // save as new answer, and state is DONE
-          await insertPartnerResponse(partnerId, text, 'DONE');
+          // find the question id first, by partner id and state is not DONE
+          const question = await getInProgressQuestionByPartnerId(partnerId);
+          if (!question) {
+            console.log(
+              'Cannot find in progress question for partner id:',
+              partnerId
+            );
+            return;
+          }
+
+          switch (question.state) {
+            case 'WAITING':
+              await insertPartnerResponse(question.id, text, 'RECEIVED');
+              break;
+            case 'ANSWERED':
+              await insertPartnerResponse(question.id, text, 'DONE');
+              break;
+            default:
+              console.log('Unknown question state:', question.state);
+          }
         }
       }
     } catch (error) {

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
+import RnHash, { CONSTANTS } from 'react-native-hash';
 import { TextInput } from 'react-native-paper';
 import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
@@ -11,7 +12,8 @@ export default function Manage({ navigation }) {
   const { insertContact } = useContact();
   const [hasInit, setHasInit] = useState(false);
   const [targetPhoneNumber, setTargetPhoneNumber] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
   const { sendSMS } = useSMS();
 
   useEffect(() => {
@@ -20,6 +22,17 @@ export default function Manage({ navigation }) {
       setHasInit(true);
     }
   }, [hasInit]);
+
+  const onSendSMS = async () => {
+    const answerHash = RnHash.hashString(answer, CONSTANTS.HashAlgorithms.md2);
+    const messageJson = {
+      type: 'question',
+      text: question,
+      answer_hash: answerHash,
+    };
+    const res = await sendSMS(targetPhoneNumber, JSON.stringify(messageJson));
+    console.log('res:', res);
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -48,11 +61,9 @@ export default function Manage({ navigation }) {
         label="Target phone number"
         onChangeText={setTargetPhoneNumber}
       />
-      <TextInput label="Message" onChangeText={setMessage} />
-      <Button
-        title="Send SMS"
-        onPress={() => sendSMS(targetPhoneNumber, message)}
-      />
+      <TextInput label="Question" onChangeText={setQuestion} />
+      <TextInput label="Answer" onChangeText={setAnswer} />
+      <Button title="Send SMS" onPress={() => onSendSMS()} />
     </View>
   );
 }

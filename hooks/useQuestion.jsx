@@ -29,7 +29,12 @@ const useQuestion = () => {
     }
   };
 
-  const insertQuestion = async (partnerId, question, state) => {
+  const insertQuestion = async (
+    partnerId,
+    question,
+    state,
+    partnerResponseHash
+  ) => {
     try {
       if (state !== 'WAITING' && state !== 'PENDING') {
         throw new Error('state must be WAITING or PENDING');
@@ -38,8 +43,14 @@ const useQuestion = () => {
 
       db.transaction((tx) => {
         tx.executeSql(
-          'INSERT INTO question (created_time, text, partner_id, state) VALUES (?, ?, ?, ?)',
-          [new Date().getTime(), question, partnerId, state],
+          'INSERT INTO question (created_time, text, partner_id, state, partner_response_hash) VALUES (?, ?, ?, ?, ?)',
+          [
+            new Date().getTime(),
+            question,
+            partnerId,
+            state,
+            partnerResponseHash || '',
+          ],
           (_, { rows }) => {
             console.log(rows);
             // return question id
@@ -100,8 +111,38 @@ const useQuestion = () => {
     }
   };
 
+  const getInProgressQuestionByPartnerId = async (partnerId) => {
+    try {
+      const db = await SQLite.openDatabase(dbName);
+      const queryResult = await new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            'SELECT * FROM question WHERE partner_id = ? AND NOT state = ?',
+            [partnerId, 'DONE'],
+            (_, { rows }) => {
+              if (rows._array.length === 0) {
+                resolve(null);
+              } else {
+                resolve(rows._array[0]);
+              }
+            },
+
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+      return queryResult;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
   return {
     queryQuestionByPartnerId,
+    getInProgressQuestionByPartnerId,
     insertQuestion,
     insertMyResponse,
     insertPartnerResponse,
