@@ -53,7 +53,8 @@ export default function Room({ route }) {
     );
   }, [contactInfo, questionInfo]);
 
-  if (!contactInfo) {
+  if (contactInfo.name === undefined && questionInfo.length === undefined) {
+    console.log('loading');
     return <View />;
   }
 
@@ -92,7 +93,7 @@ export default function Room({ route }) {
         <LeftRightButton
           icon="chevron-left-circle"
           direction="left"
-          total={questionInfo.length}
+          total={questionInfo.length !== undefined ? questionInfo.length : 0}
           index={index}
           setIndex={setIndex}
         />
@@ -102,7 +103,7 @@ export default function Room({ route }) {
           </ScrollView>
         ) : (
           <RoomCardHistory
-            total={questionInfo.length}
+            total={questionInfo.length !== undefined ? questionInfo.length : 0}
             index={index}
             singleQuestionInfo={questionInfo[questionInfo.length + index]}
             partnerName={contactInfo.name}
@@ -111,7 +112,7 @@ export default function Room({ route }) {
         <LeftRightButton
           icon="chevron-right-circle"
           direction="right"
-          total={questionInfo.length}
+          total={questionInfo.length !== undefined ? questionInfo.length : 0}
           index={index}
           setIndex={setIndex}
         />
