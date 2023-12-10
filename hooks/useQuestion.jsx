@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as SQLite from 'expo-sqlite';
+import { CONSTANTS, JSHash } from 'react-native-hash';
 import useDatabase from './useDatabase';
 
 const useQuestion = () => {
@@ -133,10 +134,10 @@ const useQuestion = () => {
   ) => {
     try {
       const db = await SQLite.openDatabase(dbName);
-      // const answerHash = RnHash.hashString(
-      //   partnerResponse,
-      //   CONSTANTS.HashAlgorithms.md2
-      // );
+      const answerHash = await JSHash(
+        partnerResponse,
+        CONSTANTS.HashAlgorithms.md5
+      );
       db.transaction((tx) => {
         tx.executeSql(
           'INSERT INTO question (created_time, text, partner_id, my_response, partner_response, partner_response_hash, my_response_created_time, partner_response_created_time, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -146,7 +147,7 @@ const useQuestion = () => {
             partnerId,
             myResponse,
             partnerResponse,
-            partnerResponse,
+            answerHash,
             new Date().getTime(),
             new Date().getTime(),
             'DONE',

@@ -53,6 +53,10 @@ export default function Room({ route }) {
     );
   }, [contactInfo, questionInfo]);
 
+  if (!contactInfo) {
+    return <View />;
+  }
+
   return (
     <View
       style={{
