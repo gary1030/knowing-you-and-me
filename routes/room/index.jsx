@@ -101,7 +101,7 @@ export default function Room({ route }) {
           <ScrollView>
             <RoomCardQuestion
               partnerName={contactInfo.name}
-              partnerPhoneNumber={contactInfo.phoneNumber}
+              partnerPhoneNumber={contactInfo.phone_number}
               partnerId={contactId}
             />
           </ScrollView>

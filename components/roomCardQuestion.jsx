@@ -14,7 +14,7 @@ export default function RoomCardQuestion({
   const exampleQuestions = ['Question 1', 'Question 2', 'Question 3'];
   const [question, setQuestion] = React.useState('');
   const [answer, setAnswer] = React.useState('');
-  const { insertQuestion } = useQuestion();
+  const { insertQuestion, insertMyResponse } = useQuestion();
 
   const generateRandomQuestion = () => {
     const randomIndex = Math.floor(Math.random() * exampleQuestions.length);
@@ -28,12 +28,32 @@ export default function RoomCardQuestion({
       text: question,
       answer_hash: answerHash,
     };
-    console.log('prepared to send message: ', JSON.stringify(messageJson));
-    const res = await sendSMS(partnerPhoneNumber, JSON.stringify(messageJson));
-    console.log('res:', res);
-    // add to db
-    const questionId = await insertQuestion(partnerId, question, 'WAITING', '');
-    console.log('new questionId: ', questionId);
+    console.log(
+      'prepared to send message: ',
+      partnerPhoneNumber,
+      JSON.stringify(messageJson)
+    );
+    try {
+      const res = await sendSMS(
+        partnerPhoneNumber,
+        JSON.stringify(messageJson)
+      );
+      console.log('res:', res);
+      // add to db
+      const questionId = await insertQuestion(
+        partnerId,
+        question,
+        'WAITING',
+        ''
+      );
+      console.log('new questionId: ', questionId);
+
+      if (questionId !== undefined && questionId !== null) {
+        await insertMyResponse(questionId, answer, 'WAITING');
+      }
+    } catch (error) {
+      console.log('error:', error);
+    }
   };
 
   return (
@@ -97,5 +117,5 @@ export default function RoomCardQuestion({
 RoomCardQuestion.propTypes = {
   partnerName: PropTypes.string.isRequired,
   partnerPhoneNumber: PropTypes.string.isRequired,
-  partnerId: PropTypes.string.isRequired,
+  partnerId: PropTypes.number.isRequired,
 };

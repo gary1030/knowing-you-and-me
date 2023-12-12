@@ -41,30 +41,40 @@ const useQuestion = () => {
         throw new Error('state must be WAITING or PENDING');
       }
       const db = await SQLite.openDatabase(dbName);
+      let res; // 定義變數以保存結果
 
-      db.transaction((tx) => {
-        tx.executeSql(
-          'INSERT INTO question (created_time, text, partner_id, state, partner_response_hash) VALUES (?, ?, ?, ?, ?)',
-          [
-            new Date().getTime(),
-            question,
-            partnerId,
-            state,
-            partnerResponseHash || '',
-          ],
-          (_, { rows }) => {
-            console.log(rows);
-            // return question id
-            return rows.insertId;
-          },
-
-          (_, error) => {
-            console.log(error);
-          }
-        );
+      await new Promise((resolve) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            'INSERT INTO question (created_time, text, partner_id, state, partner_response_hash) VALUES (?, ?, ?, ?, ?)',
+            [
+              new Date().getTime(),
+              question,
+              partnerId,
+              state,
+              partnerResponseHash || '',
+            ],
+            (_, result) => {
+              console.log(result);
+              resolve(result.insertId);
+            },
+            (_, error) => {
+              console.log(error);
+            },
+            (_, success) => {
+              console.log(success);
+            }
+          );
+        });
+      }).then((result) => {
+        res = result;
       });
+
+      console.log('res: ', res);
+      return res;
     } catch (error) {
       console.log(error);
+      return null;
     }
   };
 

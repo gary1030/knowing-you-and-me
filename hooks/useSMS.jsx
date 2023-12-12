@@ -135,9 +135,10 @@ const useSMS = () => {
         `${MESSAGE_PREFIX}${message}`
       );
       console.log('result:', result);
-    } else {
-      console.log('SMS is not available on this device');
+      return result;
     }
+    console.log('SMS is not available on this device');
+    return false;
   };
 
   return {
