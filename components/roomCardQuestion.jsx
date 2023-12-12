@@ -1,19 +1,21 @@
-import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Card, Text, TextInput, Divider } from 'react-native-paper';
+import * as React from 'react';
 import { CONSTANTS, JSHash } from 'react-native-hash';
+import { Button, Card, Divider, Text, TextInput } from 'react-native-paper';
+import useQuestion from '../hooks/useQuestion';
+import useRandomQuestion from '../hooks/useRandomQuestion';
 import useSMS from '../hooks/useSMS';
 
-export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
+export default function RoomCardQuestion({
+  partnerId,
+  partnerName,
+  partnerPhoneNumber,
+}) {
   const { sendSMS } = useSMS();
-  const exampleQuestions = ['Question 1', 'Question 2', 'Question 3'];
   const [question, setQuestion] = React.useState('');
   const [answer, setAnswer] = React.useState('');
-
-  const generateRandomQuestion = () => {
-    const randomIndex = Math.floor(Math.random() * exampleQuestions.length);
-    setQuestion(exampleQuestions[randomIndex]);
-  };
+  const { insertQuestion, insertMyResponse } = useQuestion();
+  const { generateRandomQuestion } = useRandomQuestion();
 
   const onSendSMS = async () => {
     const answerHash = await JSHash(answer, CONSTANTS.HashAlgorithms.md5);
@@ -22,10 +24,32 @@ export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
       text: question,
       answer_hash: answerHash,
     };
-    console.log('prepared to send message: ', JSON.stringify(messageJson));
-    // add to db
-    const res = await sendSMS(partnerPhoneNumber, JSON.stringify(messageJson));
-    console.log('res:', res);
+    console.log(
+      'prepared to send message: ',
+      partnerPhoneNumber,
+      JSON.stringify(messageJson)
+    );
+    try {
+      const res = await sendSMS(
+        partnerPhoneNumber,
+        JSON.stringify(messageJson)
+      );
+      console.log('res:', res);
+      // add to db
+      const questionId = await insertQuestion(
+        partnerId,
+        question,
+        'WAITING',
+        ''
+      );
+      console.log('new questionId: ', questionId);
+
+      if (questionId !== undefined && questionId !== null) {
+        await insertMyResponse(questionId, answer, 'WAITING');
+      }
+    } catch (error) {
+      console.log('error:', error);
+    }
   };
 
   return (
@@ -49,6 +73,8 @@ export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
           value={question}
           onChangeText={(text) => setQuestion(text)}
           style={{ margin: '5%' }}
+          multiline
+          numberOfLines={3}
         />
         <Text variant="bodyMedium" style={{ alignSelf: 'center' }}>
           OR
@@ -56,7 +82,7 @@ export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
         <Button
           mode="contained-tonal"
           style={{ alignSelf: 'center', margin: '5%' }}
-          onPress={generateRandomQuestion}
+          onPress={() => setQuestion(generateRandomQuestion())}
         >
           隨機出題
         </Button>
@@ -73,6 +99,8 @@ export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
           value={answer}
           onChangeText={(text) => setAnswer(text)}
           style={{ margin: '5%' }}
+          multiline
+          numberOfLines={3}
         />
         <Button
           mode="contained"
@@ -89,4 +117,5 @@ export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
 RoomCardQuestion.propTypes = {
   partnerName: PropTypes.string.isRequired,
   partnerPhoneNumber: PropTypes.string.isRequired,
+  partnerId: PropTypes.number.isRequired,
 };
