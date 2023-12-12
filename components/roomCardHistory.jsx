@@ -48,7 +48,7 @@ export default function RoomCardHistory({
           variant="labelLarge"
           style={{ alignSelf: 'center', marginTop: '15%', marginBottom: '5%' }}
         >
-          {`${partnerName} 的回答`}
+          {`${partnerName}的回答`}
         </Text>
         <Text
           variant="bodyMedium"

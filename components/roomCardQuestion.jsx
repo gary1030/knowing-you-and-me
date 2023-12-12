@@ -1,8 +1,11 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Card, Text, TextInput, Divider } from 'react-native-paper';
+import { CONSTANTS, JSHash } from 'react-native-hash';
+import useSMS from '../hooks/useSMS';
 
-export default function RoomCardQuestion({ name }) {
+export default function RoomCardQuestion({ partnerName, partnerPhoneNumber }) {
+  const { sendSMS } = useSMS();
   const exampleQuestions = ['Question 1', 'Question 2', 'Question 3'];
   const [question, setQuestion] = React.useState('');
   const [answer, setAnswer] = React.useState('');
@@ -10,6 +13,19 @@ export default function RoomCardQuestion({ name }) {
   const generateRandomQuestion = () => {
     const randomIndex = Math.floor(Math.random() * exampleQuestions.length);
     setQuestion(exampleQuestions[randomIndex]);
+  };
+
+  const onSendSMS = async () => {
+    const answerHash = await JSHash(answer, CONSTANTS.HashAlgorithms.md5);
+    const messageJson = {
+      type: 'question',
+      text: question,
+      answer_hash: answerHash,
+    };
+    console.log('prepared to send message: ', JSON.stringify(messageJson));
+    // add to db
+    const res = await sendSMS(partnerPhoneNumber, JSON.stringify(messageJson));
+    console.log('res:', res);
   };
 
   return (
@@ -24,7 +40,7 @@ export default function RoomCardQuestion({ name }) {
           style={{ alignSelf: 'center', marginTop: '5%', marginBottom: '5%' }}
         >
           有什麼想問
-          {name}
+          {partnerName}
           的嗎？
         </Text>
         <TextInput
@@ -61,10 +77,7 @@ export default function RoomCardQuestion({ name }) {
         <Button
           mode="contained"
           style={{ alignSelf: 'center', margin: '5%' }}
-          onPress={() => {
-            console.log('確認送出');
-            console.log('question:', question, '/ answer:', answer);
-          }}
+          onPress={onSendSMS}
         >
           確認送出
         </Button>
@@ -74,5 +87,6 @@ export default function RoomCardQuestion({ name }) {
 }
 
 RoomCardQuestion.propTypes = {
-  name: PropTypes.string.isRequired,
+  partnerName: PropTypes.string.isRequired,
+  partnerPhoneNumber: PropTypes.string.isRequired,
 };
