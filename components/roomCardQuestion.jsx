@@ -3,6 +3,7 @@ import * as React from 'react';
 import { CONSTANTS, JSHash } from 'react-native-hash';
 import { Button, Card, Divider, Text, TextInput } from 'react-native-paper';
 import useQuestion from '../hooks/useQuestion';
+import useRandomQuestion from '../hooks/useRandomQuestion';
 import useSMS from '../hooks/useSMS';
 
 export default function RoomCardQuestion({
@@ -11,15 +12,10 @@ export default function RoomCardQuestion({
   partnerPhoneNumber,
 }) {
   const { sendSMS } = useSMS();
-  const exampleQuestions = ['Question 1', 'Question 2', 'Question 3'];
   const [question, setQuestion] = React.useState('');
   const [answer, setAnswer] = React.useState('');
   const { insertQuestion, insertMyResponse } = useQuestion();
-
-  const generateRandomQuestion = () => {
-    const randomIndex = Math.floor(Math.random() * exampleQuestions.length);
-    setQuestion(exampleQuestions[randomIndex]);
-  };
+  const { generateRandomQuestion } = useRandomQuestion();
 
   const onSendSMS = async () => {
     const answerHash = await JSHash(answer, CONSTANTS.HashAlgorithms.md5);
@@ -77,6 +73,8 @@ export default function RoomCardQuestion({
           value={question}
           onChangeText={(text) => setQuestion(text)}
           style={{ margin: '5%' }}
+          multiline
+          numberOfLines={3}
         />
         <Text variant="bodyMedium" style={{ alignSelf: 'center' }}>
           OR
@@ -84,7 +82,7 @@ export default function RoomCardQuestion({
         <Button
           mode="contained-tonal"
           style={{ alignSelf: 'center', margin: '5%' }}
-          onPress={generateRandomQuestion}
+          onPress={() => setQuestion(generateRandomQuestion())}
         >
           隨機出題
         </Button>
@@ -101,6 +99,8 @@ export default function RoomCardQuestion({
           value={answer}
           onChangeText={(text) => setAnswer(text)}
           style={{ margin: '5%' }}
+          multiline
+          numberOfLines={3}
         />
         <Button
           mode="contained"
