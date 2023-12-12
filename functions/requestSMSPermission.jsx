@@ -25,7 +25,7 @@ async function requestSMSPermission() {
     }
     return false;
   }
-  return true;
+  return false;
 }
 
 export default requestSMSPermission;
