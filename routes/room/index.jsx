@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, Button } from 'react-native-paper';
 import LeftRightButton from '../../components/leftRightButton';
 import RoomCardHistory from '../../components/roomCardHistory';
 import RoomCardQuestion from '../../components/roomCardQuestion';
@@ -34,45 +34,6 @@ export default function Room({ route }) {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const fakeQuestionInfo = [
-          {
-            created_time: 1702214091394,
-            id: 1,
-            my_response: '晚上',
-            my_response_created_time: 1702214091394,
-            partner_id: 1,
-            partner_response: '早上',
-            partner_response_created_time: 1702214091394,
-            partner_response_hash: 'c8c0ba481d742078cfa40544a3eacfb2',
-            state: 'DONE',
-            text: '你喜歡早上還是晚上？',
-          },
-          {
-            created_time: 1702214091394,
-            id: 2,
-            my_response: '狗',
-            my_response_created_time: 1702214091394,
-            partner_id: 1,
-            partner_response: '貓',
-            partner_response_created_time: 1702214091394,
-            partner_response_hash: 'c8c0ba481d742078cfa40544a3eacfb2',
-            state: 'DONE',
-            text: '你喜歡狗還是貓？',
-          },
-          {
-            created_time: 1702214091394,
-            id: 3,
-            my_response: '',
-            my_response_created_time: null,
-            partner_id: 1,
-            partner_response: '藍色',
-            partner_response_created_time: 1702214091394,
-            partner_response_hash: 'c8c0ba481d742078cfa40544a3eacfb2',
-            state: 'PENDING',
-            text: '你喜歡哪一個顏色？',
-          },
-        ];
-        // setQuestionInfo(fakeQuestionInfo);
         setQuestionInfo(await queryQuestionByPartnerId(contactId));
       } catch (error) {
         console.log('error', error);
@@ -105,6 +66,7 @@ export default function Room({ route }) {
           <RoomCardQuestion
             partnerName={contactInfo.name}
             partnerPhoneNumber={contactInfo.phone_number}
+            partnerId={contactId}
           />
         </ScrollView>
       );
@@ -115,6 +77,7 @@ export default function Room({ route }) {
           <RoomCardQuestion
             partnerName={contactInfo.name}
             partnerPhoneNumber={contactInfo.phone_number}
+            partnerId={contactId}
           />
         </ScrollView>
       );
@@ -143,6 +106,14 @@ export default function Room({ route }) {
     );
   };
 
+  const refreshQuestions = async () => {
+    try {
+      setQuestionInfo(await queryQuestionByPartnerId(contactId));
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   if (contactInfo.name === undefined || questionInfo.length === undefined) {
     return <View />;
   }
@@ -157,7 +128,6 @@ export default function Room({ route }) {
       <View
         style={{
           flex: 1,
-          justifyContent: 'flex-end',
           alignItems: 'center',
         }}
       >
@@ -165,11 +135,14 @@ export default function Room({ route }) {
           style={{
             fontWeight: 'bold',
             fontSize: 18,
-            marginBottom: '1%',
+            marginTop: '10%',
           }}
         >
           {`A world between you and ${contactInfo.name}!`}
         </Text>
+        <Button icon="refresh" mode="text" onPress={refreshQuestions}>
+          Press me to refresh
+        </Button>
       </View>
       <View
         style={{
