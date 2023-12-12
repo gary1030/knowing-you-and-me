@@ -11,15 +11,17 @@ import Status from './status';
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {
-  const { buttonClickHandler, requestSMSPermission } = useSMS();
+  // eslint-disable-next-line operator-linebreak
+  const { buttonClickHandler, hasReceiveSMSPermission, hasReadSMSPermission } =
+    useSMS();
   useEffect(() => {
-    async function init() {
-      await requestSMSPermission();
+    console.log('Starting app...');
+    if (hasReceiveSMSPermission && hasReadSMSPermission) {
       buttonClickHandler();
       console.log('Start Read SMS');
     }
-    init();
-  }, [buttonClickHandler]);
+    // init();
+  }, [buttonClickHandler, hasReceiveSMSPermission, hasReadSMSPermission]);
 
   return (
     <Stack.Navigator initialRouteName="Home">

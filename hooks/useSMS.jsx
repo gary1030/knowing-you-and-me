@@ -100,8 +100,12 @@ const useSMS = () => {
     setErrorCallbackStatus('Start Read SMS failed');
   };
 
-  const buttonClickHandler = () => {
-    startReadSMS(callbackFn1, callbackFn2);
+  const buttonClickHandler = async () => {
+    try {
+      await startReadSMS(callbackFn1, callbackFn2);
+    } catch (error) {
+      console.log('error:', error);
+    }
   };
 
   const checkPermissions = async () => {
