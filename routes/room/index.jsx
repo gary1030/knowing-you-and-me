@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import useContact from '../../hooks/useContact';
-import useQuestion from '../../hooks/useQuestion';
-import RoomCardQuestion from '../../components/roomCardQuestion';
 import LeftRightButton from '../../components/leftRightButton';
 import RoomCardHistory from '../../components/roomCardHistory';
+import RoomCardQuestion from '../../components/roomCardQuestion';
+import useContact from '../../hooks/useContact';
+import useQuestion from '../../hooks/useQuestion';
 
 export default function Room({ route }) {
   const { contactId } = route.params;
@@ -99,7 +99,11 @@ export default function Room({ route }) {
         />
         {index === 0 ? (
           <ScrollView>
-            <RoomCardQuestion name={contactInfo.name} />
+            <RoomCardQuestion
+              partnerName={contactInfo.name}
+              partnerPhoneNumber={contactInfo.phoneNumber}
+              partnerId={contactId}
+            />
           </ScrollView>
         ) : (
           <RoomCardHistory
