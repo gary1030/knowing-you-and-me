@@ -3,9 +3,12 @@ import { useEffect, useState } from 'react';
 import { PermissionsAndroid } from 'react-native';
 
 // import { startReadSMS } from '@maniac-tech/react-native-expo-read-sms';
+// eslint-disable-next-line import/no-unresolved
+import { startReadSMS } from 'expo-read-sms';
 import * as SMS from 'expo-sms';
 import requestSMSPermission from '../functions/requestSMSPermission';
-import { startReadSMS } from '../functions/startReadSMS';
+// eslint-disable-next-line import/no-relative-packages
+// import { startReadSMS } from '../functions/startReadSMS';
 import useContact from './useContact';
 import useQuestion from './useQuestion';
 

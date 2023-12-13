@@ -6,6 +6,8 @@ const { RNExpoReadSms } = NativeModules;
 export default RNExpoReadSms;
 
 export async function startReadSMS(callback) {
+  console.log('startReadSMS');
+  console.log('RNExpoReadSms', RNExpoReadSms);
   const resultFun = (status, sms, error) => {
     if (callback) {
       callback(status, sms, error);

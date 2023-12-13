@@ -1,46 +1,17 @@
+/* eslint-disable operator-linebreak */
 import {
   NativeEventEmitter,
   NativeModules,
   PermissionsAndroid,
   Platform,
-} from "react-native";
+} from 'react-native';
 
 const { RNExpoReadSms } = NativeModules;
 
 export default RNExpoReadSms;
 
-export async function startReadSMS(callback) {
-  let resultFun = (status, sms, error) => {
-    if (callback) {
-      callback(status, sms, error);
-    }
-  };
-  if (Platform.OS === "android") {
-    const hasPermission = await checkIfHasSMSPermission();
-    if (hasPermission) {
-      RNExpoReadSms.startReadSMS(
-        (result) => {
-          new NativeEventEmitter(RNExpoReadSms).addListener(
-            "received_sms",
-            (sms) => {
-              resultFun("success", sms);
-            }
-          );
-        },
-        (error) => {
-          resultFun("error", "", error);
-        }
-      );
-    } else {
-      resultFun("error", "", "Required RECEIVE_SMS and READ_SMS permission");
-    }
-  } else {
-    resultFun("error", "", "ReadSms Plugin is only for android platform");
-  }
-}
-
 export const checkIfHasSMSPermission = async () => {
-  if (Platform.OS === "android" && Platform.Version < 23) {
+  if (Platform.OS === 'android' && Platform.Version < 23) {
     return true;
   }
 
@@ -59,19 +30,55 @@ export const checkIfHasSMSPermission = async () => {
   };
 };
 
-export async function requestReadSMSPermission() {
-  if (Platform.OS === "android") {
+export async function startReadSMS(callback) {
+  console.log('RNExpoReadSms (in package)', RNExpoReadSms);
+  const resultFun = (status, sms, error) => {
+    if (callback) {
+      callback(status, sms, error);
+    }
+  };
+  if (Platform.OS === 'android') {
     const hasPermission = await checkIfHasSMSPermission();
-    if (hasPermission.hasReadSmsPermission && hasPermission.hasReceiveSmsPermission) return true;
+    if (hasPermission) {
+      RNExpoReadSms.startReadSMS(
+        () => {
+          new NativeEventEmitter(RNExpoReadSms).addListener(
+            'received_sms',
+            (sms) => {
+              resultFun('success', sms);
+            }
+          );
+        },
+        (error) => {
+          resultFun('error', '', error);
+        }
+      );
+    } else {
+      resultFun('error', '', 'Required RECEIVE_SMS and READ_SMS permission');
+    }
+  } else {
+    resultFun('error', '', 'ReadSms Plugin is only for android platform');
+  }
+}
+
+export async function requestReadSMSPermission() {
+  if (Platform.OS === 'android') {
+    const hasPermission = await checkIfHasSMSPermission();
+    if (
+      hasPermission.hasReadSmsPermission &&
+      hasPermission.hasReceiveSmsPermission
+    ) {
+      return true;
+    }
     const status = await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
       PermissionsAndroid.PERMISSIONS.READ_SMS,
     ]);
     if (status === PermissionsAndroid.RESULTS.GRANTED) return true;
     if (status === PermissionsAndroid.RESULTS.DENIED) {
-      console.log("Read Sms permission denied by user.", status);
+      console.log('Read Sms permission denied by user.', status);
     } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-      console.log("Read Sms permission revoked by user.", status);
+      console.log('Read Sms permission revoked by user.', status);
     }
     return false;
   }
@@ -79,7 +86,7 @@ export async function requestReadSMSPermission() {
 }
 
 export function stopReadSMS() {
-  if (Platform.OS === "android") {
+  if (Platform.OS === 'android') {
     RNExpoReadSms.stopReadSMS();
   }
 }
