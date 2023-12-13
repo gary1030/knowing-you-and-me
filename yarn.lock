@@ -3788,6 +3788,13 @@ expo-sms@^11.5.0:
   resolved "https://registry.yarnpkg.com/expo-sms/-/expo-sms-11.5.0.tgz#22c9bde60fa5bf7a352cc6b0961b0c70cc8d54c6"
   integrity sha512-BMpIvp4DmUv19RtDghw9bbl/0LhwiZPh2UHOxQ7FCO3skYuMqOn42/TMKEpJG3yADaMZsV19wjinQ0S+BPDigg==
 
+expo-splash-screen@~0.20.5:
+  version "0.20.5"
+  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.20.5.tgz#ebeba3e3977606830f74f506ab2cc25042bb7efd"
+  integrity sha512-nTALYdjHpeEA30rdOWSguxn72ctv8WM8ptuUgpfRgsWyn4i6rwYds/rBXisX69XO5fg+XjHAQqijGx/b28+3tg==
+  dependencies:
+    "@expo/prebuild-config" "6.2.6"
+
 expo-sqlite@~11.3.3:
   version "11.3.3"
   resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-11.3.3.tgz#5b07e7ffd744d2d04fe2075ec6fac834c78a5f53"

@@ -1,5 +1,16 @@
 # Knowing-You-and-Me
 
+## Prepare Package
+
+```sh
+cd packages/expo-read-sms
+npm install
+npm run build
+cd ../..
+npx expo prebuild --clean
+```
+
+
 ## Start Project
 
 ```sh

@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import { PermissionsAndroid } from 'react-native';
 
-import { startReadSMS } from '@maniac-tech/react-native-expo-read-sms';
+// import { startReadSMS } from '@maniac-tech/react-native-expo-read-sms';
 import * as SMS from 'expo-sms';
 import requestSMSPermission from '../functions/requestSMSPermission';
+import { startReadSMS } from '../functions/startReadSMS';
 import useContact from './useContact';
 import useQuestion from './useQuestion';
 
