@@ -19,6 +19,7 @@ const useSMS = () => {
   const [errorCallbackStatus, setErrorCallbackStatus] = useState(null);
   const [smsValue, setSmsValue] = useState(null);
   const [smsError, setSMSError] = useState(null);
+  const [smsMessage, setSMSMessage] = useState(null);
 
   const {
     insertQuestion,
@@ -35,6 +36,7 @@ const useSMS = () => {
         const messageWithoutPrefix = message.substring(MESSAGE_PREFIX.length);
         // eval to json object
         const messageObject = JSON.parse(messageWithoutPrefix);
+        setSMSMessage(messageObject);
         console.log('messageObject:', messageObject);
         const { type, text } = messageObject;
         let contact = await queryByPhoneNumber(phoneNumber);
@@ -43,6 +45,7 @@ const useSMS = () => {
           await insertContact('Anonymous', phoneNumber);
           contact = await queryByPhoneNumber(phoneNumber);
         }
+        setSMSMessage(contact);
         const partnerId = contact.id;
         if (type === 'question') {
           // save as new question, and state is PENDING
@@ -52,6 +55,7 @@ const useSMS = () => {
             'PENDING',
             messageObject.answer_hash
           );
+          setSMSMessage('inserted question');
         } else if (type === 'answer') {
           // save as new answer, and state is DONE
           // find the question id first, by partner id and state is not DONE
@@ -72,22 +76,27 @@ const useSMS = () => {
               await insertPartnerResponse(question.id, text, 'DONE');
               break;
             default:
-              console.log('Unknown question state:', question.state);
+              setSMSError(`Unknown question state:${String(question.state)}`);
           }
+        } else {
+          setSMSError('Unknown message type');
         }
+      } else {
+        setSMSError('Message does not start with prefix');
       }
     } catch (error) {
       console.log('Process SMS error: ', error);
+      setSMSError(error);
     }
   };
 
-  const callbackFn1 = (status, sms, error) => {
+  const callbackFn1 = async (status, sms, error) => {
     setSmsPermissionState('Success Callback!');
 
     if (status === 'success') {
       setSuccessCallbackStatus('just success');
       setSmsValue(sms);
-      processSMS(sms);
+      await processSMS(sms);
     } else {
       setSuccessCallbackStatus('Error in success callback');
       setSMSError(error);
@@ -100,12 +109,8 @@ const useSMS = () => {
     setErrorCallbackStatus('Start Read SMS failed');
   };
 
-  const buttonClickHandler = async () => {
-    try {
-      await startReadSMS(callbackFn1, callbackFn2);
-    } catch (error) {
-      console.log('error:', error);
-    }
+  const buttonClickHandler = () => {
+    startReadSMS(callbackFn1, callbackFn2);
   };
 
   const checkPermissions = async () => {
@@ -159,6 +164,7 @@ const useSMS = () => {
     smsValue,
     smsError,
     sendSMS,
+    smsMessage,
   };
 };
 
