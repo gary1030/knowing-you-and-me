@@ -46,7 +46,7 @@ const useDatabase = () => {
           'create table if not exists contact (id integer primary key autoincrement, name text, phone_number text not null unique);'
         );
         tx.executeSql(
-          'create table if not exists question (id integer primary key autoincrement, created_time datetime, text text, partner_id integer, my_response text, partner_response text, partner_response_hash text,  my_response_created_time datetime, partner_response_created_time datetime, state text, foreign key (partner_id) references contact(id));'
+          'create table if not exists question (id integer primary key autoincrement, created_time datetime, text text, partner_id integer, my_response text, partner_response text, partner_response_hash text,  my_response_created_time datetime, partner_response_created_time datetime, state text, foreign key (partner_id) references contact(id), UNIQUE (partner_id, text));'
         );
       });
       setDB(tempDB);

@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Card, Divider, Text, TextInput, Button } from 'react-native-paper';
+import { Button, Card, Divider, Text, TextInput } from 'react-native-paper';
+import useQuestion from '../hooks/useQuestion';
 import useSMS from '../hooks/useSMS';
 
 export default function RoomCardAnswer({
@@ -12,6 +13,7 @@ export default function RoomCardAnswer({
   const { state } = singleQuestionInfo;
   const { sendSMS } = useSMS();
   const [answer, setAnswer] = useState('');
+  const { updateState } = useQuestion();
 
   const onSendSMS = async () => {
     const messageJson = {
@@ -20,6 +22,19 @@ export default function RoomCardAnswer({
     };
     console.log('prepared to send message: ', JSON.stringify(messageJson));
     // add to db
+    switch (state) {
+      case 'PENDING':
+        // update state to ANSWERED
+        await updateState(singleQuestionInfo.id, 'ANSWERED');
+        break;
+      case 'RECEIVED':
+        // update state to DONE
+        await updateState(singleQuestionInfo.id, 'DONE');
+        break;
+      default:
+        console.log('Unknown state:', state);
+    }
+
     const res = await sendSMS(partnerPhoneNumber, JSON.stringify(messageJson));
     console.log('res:', res);
   };

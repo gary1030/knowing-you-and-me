@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { Text, Button } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import LeftRightButton from '../../components/leftRightButton';
+import RoomCardAnswer from '../../components/roomCardAnswer';
 import RoomCardHistory from '../../components/roomCardHistory';
 import RoomCardQuestion from '../../components/roomCardQuestion';
 import useContact from '../../hooks/useContact';
 import useQuestion from '../../hooks/useQuestion';
-import RoomCardAnswer from '../../components/roomCardAnswer';
+import useSMS from '../../hooks/useSMS';
 
 export default function Room({ route }) {
   const { contactId } = route.params;
@@ -17,6 +18,11 @@ export default function Room({ route }) {
   const [contactInfo, setContactInfo] = useState({});
   const [questionInfo, setQuestionInfo] = useState({});
   const [state, setState] = useState('DONE');
+  const { buttonClickHandler, smsValue, smsError, smsMessage } = useSMS();
+
+  useEffect(() => {
+    buttonClickHandler();
+  }, [buttonClickHandler]);
 
   useEffect(() => {
     const fetchSingleContact = async () => {
@@ -131,6 +137,9 @@ export default function Room({ route }) {
           alignItems: 'center',
         }}
       >
+        <Text>{smsValue}</Text>
+        <Text>{smsMessage}</Text>
+        <Text>{smsError}</Text>
         <Text
           style={{
             fontWeight: 'bold',

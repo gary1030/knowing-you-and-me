@@ -236,6 +236,28 @@ const useQuestion = () => {
     }
   };
 
+  const updateState = async (questionId, state) => {
+    try {
+      const db = await SQLite.openDatabase(dbName);
+      db.transaction((tx) => {
+        tx.executeSql(
+          'UPDATE question SET state = ? WHERE id = ?',
+          [state, questionId],
+          (_, { rows }) => {
+            console.log(rows);
+            // return question id
+            return rows.insertId;
+          },
+          (_, error) => {
+            console.log(error);
+          }
+        );
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return {
     queryQuestionByPartnerId,
     getInProgressQuestionByPartnerId,
@@ -244,6 +266,7 @@ const useQuestion = () => {
     insertMyResponse,
     insertPartnerResponse,
     insertFakeQuestionRow,
+    updateState,
   };
 };
 

@@ -2,10 +2,12 @@
 import { useEffect, useState } from 'react';
 import { PermissionsAndroid } from 'react-native';
 
-import { startReadSMS } from '@maniac-tech/react-native-expo-read-sms';
 import * as SMS from 'expo-sms';
+import { startReadSMS } from 'react-native-expo-read-sms';
+import parseSMSMessage from '../functions/parseSMSMessage';
 import requestSMSPermission from '../functions/requestSMSPermission';
 import useContact from './useContact';
+import usePrevious from './usePrevious';
 import useQuestion from './useQuestion';
 
 const useSMS = () => {
@@ -19,6 +21,11 @@ const useSMS = () => {
   const [errorCallbackStatus, setErrorCallbackStatus] = useState(null);
   const [smsValue, setSmsValue] = useState(null);
   const [smsError, setSMSError] = useState(null);
+  const [smsMessage, setSMSMessage] = useState(null);
+  const [smsPhoneNumber, setSMSPhoneNumber] = useState(null);
+  const [smsText, setSMSText] = useState(null);
+  const prevSmsPhoneNumber = usePrevious(smsPhoneNumber);
+  const prevSmsText = usePrevious(smsText);
 
   const {
     insertQuestion,
@@ -27,14 +34,9 @@ const useSMS = () => {
   } = useQuestion();
   const { queryByPhoneNumber, insertContact } = useContact();
 
-  const processSMS = async (sms) => {
-    try {
-      const phoneNumber = sms[0];
-      const message = sms[1];
-      if (message.startsWith(MESSAGE_PREFIX)) {
-        const messageWithoutPrefix = message.substring(MESSAGE_PREFIX.length);
-        // eval to json object
-        const messageObject = JSON.parse(messageWithoutPrefix);
+  useEffect(() => {
+    const processSMS = async (phoneNumber, messageObject) => {
+      try {
         console.log('messageObject:', messageObject);
         const { type, text } = messageObject;
         let contact = await queryByPhoneNumber(phoneNumber);
@@ -72,22 +74,42 @@ const useSMS = () => {
               await insertPartnerResponse(question.id, text, 'DONE');
               break;
             default:
-              console.log('Unknown question state:', question.state);
+              setSMSError(`Unknown question state:${String(question.state)}`);
           }
+        } else {
+          setSMSError('Unknown message type');
         }
+      } catch (error) {
+        console.log('Process SMS error: ', error);
+        setSMSError(error);
       }
-    } catch (error) {
-      console.log('Process SMS error: ', error);
-    }
-  };
+    };
 
-  const callbackFn1 = (status, sms, error) => {
+    if (smsPhoneNumber && smsText) {
+      if (prevSmsPhoneNumber !== smsPhoneNumber || prevSmsText !== smsText) {
+        processSMS(smsPhoneNumber, smsMessage);
+      }
+    }
+  }, [smsPhoneNumber, smsText]);
+
+  const callbackFn1 = async (status, sms, error) => {
     setSmsPermissionState('Success Callback!');
 
     if (status === 'success') {
       setSuccessCallbackStatus('just success');
       setSmsValue(sms);
-      processSMS(sms);
+      // transform smsString to array
+      try {
+        const { phoneNumber, message } = parseSMSMessage(sms, MESSAGE_PREFIX);
+        if (phoneNumber && message) {
+          setSMSPhoneNumber(phoneNumber);
+          setSMSMessage(message);
+          setSMSText(message.text);
+        }
+      } catch (e) {
+        console.log('Parse SMS error:', error);
+        setSMSError(e);
+      }
     } else {
       setSuccessCallbackStatus('Error in success callback');
       setSMSError(error);
@@ -100,12 +122,8 @@ const useSMS = () => {
     setErrorCallbackStatus('Start Read SMS failed');
   };
 
-  const buttonClickHandler = async () => {
-    try {
-      await startReadSMS(callbackFn1, callbackFn2);
-    } catch (error) {
-      console.log('error:', error);
-    }
+  const buttonClickHandler = () => {
+    startReadSMS(callbackFn1, callbackFn2);
   };
 
   const checkPermissions = async () => {
@@ -159,6 +177,7 @@ const useSMS = () => {
     smsValue,
     smsError,
     sendSMS,
+    smsMessage,
   };
 };
 
