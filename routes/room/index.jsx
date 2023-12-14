@@ -101,11 +101,13 @@ export default function Room({ route }) {
     }
     if (index === 0 && state !== 'DONE') {
       return (
-        <RoomCardAnswer
-          singleQuestionInfo={questionInfo[questionInfo.length - 1]}
-          partnerName={contactInfo.name}
-          partnerPhoneNumber={contactInfo.phone_number}
-        />
+        <ScrollView>
+          <RoomCardAnswer
+            singleQuestionInfo={questionInfo[questionInfo.length - 1]}
+            partnerName={contactInfo.name}
+            partnerPhoneNumber={contactInfo.phone_number}
+          />
+        </ScrollView>
       );
     }
 

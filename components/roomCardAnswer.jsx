@@ -46,8 +46,6 @@ export default function RoomCardAnswer({
   return (
     <Card
       style={{
-        height: '75%',
-        width: '71%',
         margin: 4,
       }}
     >
