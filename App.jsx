@@ -1,6 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
+import { PaperProvider } from 'react-native-paper';
 import * as React from 'react';
 import Routes from './routes';
+import theme from './theme';
 
 // const styles = StyleSheet.create({
 //   container: {
@@ -13,8 +15,10 @@ import Routes from './routes';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Routes />
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        <Routes />
+      </NavigationContainer>
+    </PaperProvider>
   );
 }

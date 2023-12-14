@@ -1,8 +1,9 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton, useTheme } from 'react-native-paper';
 
 function LeftRightButton({ icon, direction, total, index, setIndex }) {
+  const theme = useTheme();
   const handlePress = () => {
     if (direction === 'left') {
       if (index + total === 0) {
@@ -24,7 +25,7 @@ function LeftRightButton({ icon, direction, total, index, setIndex }) {
   return (
     <IconButton
       icon={icon}
-      iconColor={MD3Colors.primary20}
+      iconColor={theme.colors.primary}
       size={20}
       onPress={() => handlePress()}
       disabled={
