@@ -7157,7 +7157,7 @@ react-is@^17.0.1:
 
 "react-native-expo-read-sms@https://github.com/gary1030/expo-read-sms.git":
   version "1.1.0"
-  resolved "https://github.com/gary1030/expo-read-sms.git#ebd1422d612df662cb6a7dd9b65a2da04d00ea11"
+  resolved "https://github.com/gary1030/expo-read-sms.git#6ca67838176ec4740555825f622fc7f4d51918e6"
 
 react-native-hash@^3.0.3:
   version "3.0.3"

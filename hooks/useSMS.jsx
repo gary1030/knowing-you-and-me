@@ -178,6 +178,7 @@ const useSMS = () => {
     smsError,
     sendSMS,
     smsMessage,
+    callbackFn1,
   };
 };
 

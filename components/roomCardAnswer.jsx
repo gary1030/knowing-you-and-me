@@ -13,7 +13,7 @@ export default function RoomCardAnswer({
   const { state } = singleQuestionInfo;
   const { sendSMS } = useSMS();
   const [answer, setAnswer] = useState('');
-  const { updateState } = useQuestion();
+  const { updateState, insertMyResponse } = useQuestion();
 
   const onSendSMS = async () => {
     const messageJson = {
@@ -25,7 +25,7 @@ export default function RoomCardAnswer({
     switch (state) {
       case 'PENDING':
         // update state to ANSWERED
-        await updateState(singleQuestionInfo.id, 'ANSWERED');
+        await insertMyResponse(singleQuestionInfo.id, answer, 'ANSWERED');
         break;
       case 'RECEIVED':
         // update state to DONE

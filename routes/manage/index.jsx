@@ -5,8 +5,8 @@ import { CONSTANTS, JSHash } from 'react-native-hash';
 import { TextInput } from 'react-native-paper';
 import useContact from '../../hooks/useContact';
 import useDatabase from '../../hooks/useDatabase';
-import useSMS from '../../hooks/useSMS';
 import useQuestion from '../../hooks/useQuestion';
+import useSMS from '../../hooks/useSMS';
 
 export default function Manage({ navigation }) {
   const { db, initDB, clearDB } = useDatabase();
@@ -18,7 +18,17 @@ export default function Manage({ navigation }) {
   const [answer, setAnswer] = useState('');
   const [partnerAnswer, setPartnerAnswer] = useState('');
   const [partnerId, setPartnerId] = useState(0);
-  const { sendSMS } = useSMS();
+  const { sendSMS, callbackFn1 } = useSMS();
+
+  function testSMS() {
+    if (answer !== '') {
+      const mockMessage = `[0988123345, knowingus{"type":"answer","text":"${answer}"}]`;
+      callbackFn1('success', mockMessage, null);
+    } else if (question !== '') {
+      const mockMessage = `[0988123345, knowingus{"type":"question","text":"${question}","answer_hash":"123456"}]`;
+      callbackFn1('success', mockMessage, null);
+    }
+  }
 
   useEffect(() => {
     if (!hasInit) {
@@ -76,6 +86,7 @@ export default function Manage({ navigation }) {
           insertFakeQuestionRow(partnerId, question, answer, partnerAnswer)
         }
       />
+      <Button title="Test SMS" onPress={() => testSMS()} />
     </View>
   );
 }

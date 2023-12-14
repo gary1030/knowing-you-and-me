@@ -18,11 +18,22 @@ export default function Room({ route }) {
   const [contactInfo, setContactInfo] = useState({});
   const [questionInfo, setQuestionInfo] = useState({});
   const [state, setState] = useState('DONE');
-  const { buttonClickHandler, smsValue, smsError, smsMessage } = useSMS();
+  // eslint-disable-next-line operator-linebreak
+  const { buttonClickHandler, hasReadSMSPermission, hasReceiveSMSPermission } =
+    useSMS();
+  const [hasInit, setHasInit] = useState(false);
 
   useEffect(() => {
-    buttonClickHandler();
-  }, [buttonClickHandler]);
+    if (!hasInit && hasReadSMSPermission && hasReceiveSMSPermission) {
+      buttonClickHandler();
+      setHasInit(true);
+    }
+  }, [
+    buttonClickHandler,
+    hasInit,
+    hasReadSMSPermission,
+    hasReceiveSMSPermission,
+  ]);
 
   useEffect(() => {
     const fetchSingleContact = async () => {
@@ -137,9 +148,6 @@ export default function Room({ route }) {
           alignItems: 'center',
         }}
       >
-        <Text>{smsValue}</Text>
-        <Text>{smsMessage}</Text>
-        <Text>{smsError}</Text>
         <Text
           style={{
             fontWeight: 'bold',

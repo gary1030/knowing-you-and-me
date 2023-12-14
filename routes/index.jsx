@@ -14,11 +14,14 @@ export default function Routes() {
   // eslint-disable-next-line operator-linebreak
   const { buttonClickHandler, hasReceiveSMSPermission, hasReadSMSPermission } =
     useSMS();
+  const [hasInit, setHasInit] = React.useState(false);
+
   useEffect(() => {
     console.log('Starting app...');
-    if (hasReceiveSMSPermission && hasReadSMSPermission) {
+    if (hasReceiveSMSPermission && hasReadSMSPermission && !hasInit) {
       buttonClickHandler();
       console.log('Start Read SMS');
+      setHasInit(true);
     }
     // init();
   }, [buttonClickHandler, hasReceiveSMSPermission, hasReadSMSPermission]);
