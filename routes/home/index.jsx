@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import Contact from '../../components/contact';
 import useContact from '../../hooks/useContact';
@@ -70,14 +70,16 @@ export default function Home({ navigation }) {
         ))}
       </View>
 
-      <View style={{ position: 'absolute', bottom: 10 }}>
+      <View style={{ position: 'absolute', bottom: 0 }}>
         <View flexDirection="row">
-          <Button
-            title="See status"
+          <IconButton
+            icon="tune-vertical-variant"
+            size={20}
             onPress={() => navigation.navigate('Status')}
           />
-          <Button
-            title="See manage page"
+          <IconButton
+            icon="cog-outline"
+            size={20}
             onPress={() => navigation.navigate('Manage')}
           />
         </View>

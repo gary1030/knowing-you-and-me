@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
 import { CONSTANTS, JSHash } from 'react-native-hash';
@@ -8,8 +7,8 @@ import useDatabase from '../../hooks/useDatabase';
 import useQuestion from '../../hooks/useQuestion';
 import useSMS from '../../hooks/useSMS';
 
-export default function Manage({ navigation }) {
-  const { db, initDB, clearDB } = useDatabase();
+export default function Manage() {
+  const { initDB, clearDB } = useDatabase();
   const { insertContact } = useContact();
   const { insertFakeQuestionRow } = useQuestion();
   const [hasInit, setHasInit] = useState(false);
@@ -50,20 +49,11 @@ export default function Manage({ navigation }) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
+      <Text>Developer Only!</Text>
       <Button
         title="Insert contact"
         onPress={() => insertContact('Alice', '0988123345')}
       />
-      <Button
-        title="See contact"
-        onPress={() => navigation.navigate('Contact', { db })}
-      />
-      <Button
-        title="See status"
-        onPress={() => navigation.navigate('Status')}
-      />
-      <Button title="See room" onPress={() => navigation.navigate('Room')} />
       <Button
         title="Clear database"
         onPress={() => {
@@ -78,6 +68,7 @@ export default function Manage({ navigation }) {
       <TextInput label="Question" onChangeText={setQuestion} />
       <TextInput label="Your Answer" onChangeText={setAnswer} />
       <Button title="Send SMS" onPress={() => onSendSMS()} />
+      <Button title="Test SMS" onPress={() => testSMS()} />
       <TextInput label="Partner Id" onChangeText={setPartnerId} />
       <TextInput label="Partner Answer" onChangeText={setPartnerAnswer} />
       <Button
@@ -86,13 +77,8 @@ export default function Manage({ navigation }) {
           insertFakeQuestionRow(partnerId, question, answer, partnerAnswer)
         }
       />
-      <Button title="Test SMS" onPress={() => testSMS()} />
     </View>
   );
 }
 
-Manage.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
+Manage.propTypes = {};
