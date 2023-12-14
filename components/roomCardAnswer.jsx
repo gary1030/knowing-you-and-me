@@ -25,7 +25,11 @@ export default function RoomCardAnswer({
     switch (state) {
       case 'PENDING':
         // update state to ANSWERED
-        await insertMyResponse(singleQuestionInfo.id, answer, 'ANSWERED');
+        await insertMyResponse(
+          singleQuestionInfo.id,
+          singleQuestionInfo.my_response,
+          'ANSWERED'
+        );
         break;
       case 'RECEIVED':
         // update state to DONE

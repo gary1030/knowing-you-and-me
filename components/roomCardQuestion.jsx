@@ -30,11 +30,6 @@ export default function RoomCardQuestion({
       JSON.stringify(messageJson)
     );
     try {
-      const res = await sendSMS(
-        partnerPhoneNumber,
-        JSON.stringify(messageJson)
-      );
-      console.log('res:', res);
       // add to db
       const questionId = await insertQuestion(
         partnerId,
@@ -47,6 +42,12 @@ export default function RoomCardQuestion({
       if (questionId !== undefined && questionId !== null) {
         await insertMyResponse(questionId, answer, 'WAITING');
       }
+
+      const res = await sendSMS(
+        partnerPhoneNumber,
+        JSON.stringify(messageJson)
+      );
+      console.log('res:', res);
     } catch (error) {
       console.log('error:', error);
     }
