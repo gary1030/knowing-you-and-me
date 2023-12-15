@@ -18,18 +18,16 @@ export default function RoomCardAnswer({
   const onSendSMS = async () => {
     const messageJson = {
       type: 'answer',
-      text: answer,
+      text: singleQuestionInfo.my_response
+        ? singleQuestionInfo.my_response
+        : answer,
     };
     console.log('prepared to send message: ', JSON.stringify(messageJson));
     // add to db
     switch (state) {
       case 'PENDING':
         // update state to ANSWERED
-        await insertMyResponse(
-          singleQuestionInfo.id,
-          singleQuestionInfo.my_response,
-          'ANSWERED'
-        );
+        await insertMyResponse(singleQuestionInfo.id, answer, 'ANSWERED');
         break;
       case 'RECEIVED':
         // update state to DONE
